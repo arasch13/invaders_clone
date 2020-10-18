@@ -6,6 +6,7 @@ import pygame	# game module
 
 # import own modules
 from settings import Settings
+from ship import Ship
 
 # create class for game
 class SpaceInvadersClone:
@@ -19,12 +20,14 @@ class SpaceInvadersClone:
 		# load settings
 		self.settings = Settings()
 		 # set game window to predefined resolution in 'settings'
+		 # the self.screen object here is a 'surface'
+		 # any visual element in the game window is its own surface
 		self.screen = pygame.display.set_mode(
 			(self.settings.screen_width, self.settings.screen_height))
 		# set window title
 		pygame.display.set_caption("Space Invaders Clone")
-
-
+		# initialize ship
+		self.ship = Ship(self)
 
 	def run_game(self):
 		"""start main loop for game"""
@@ -36,8 +39,8 @@ class SpaceInvadersClone:
 
 			# screen updater (update game window for each while loop):
 			self.screen.fill(self.settings.bg_color) # background color
-			pygame.display.flip() # only make recently drawn screen visible:
-
+			self.ship.blitme() # draw ship
+			pygame.display.flip() # only make recently drawn screen visible
 
 
 # start game if module run directly
