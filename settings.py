@@ -8,14 +8,13 @@ class Settings:
 		self.fps = 60
 		# screen settings
 		self.screen_mode = 'fullscreen' # 'window' or 'fullscreen'
-		self.window_screen_width = 1400
-		self.window_screen_height = 900
+		self.window_screen_width = 800
+		self.window_screen_height = 600
 		self.bg_color = (230, 230, 230)
-		## game settings
+		# bullet settings
+		self.bullet_speed = 0.5
+		self.bullet_width_factor = 0.002
+		self.bullet_height_factor = 0.02
+		self.bullet_color = (60, 60, 60) 
 		# game difficulty
 		self.difficulty = 'normal'
-		# bullet settings
-		self.bullet_speed = 1.0
-		self.bullet_width = 3
-		self.bullet_height = 15
-		self.bullet_color = (60, 60, 60) 

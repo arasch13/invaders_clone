@@ -16,7 +16,12 @@ class Ship:
 		# load image of ship and get its rectangle dimension
 		path = os.path.dirname(__file__) # get path of this file
 		self.image = pygame.image.load(rf"{path}\images\ship.png")
+		# resize ship based on screen resolution
+		displayInfo = pygame.display.Info()
+		self.image = pygame.transform.scale(self.image, (int(112/1920 * displayInfo.current_w), int(144/1080 * displayInfo.current_h)))
+		# get ship's rectangle dimension
 		self.rect = self.image.get_rect()
+		
 		# get bottom center of screen and set as bottom center of ship rectangle
 		# possible position attributes of a rectangle:
 		# top, bottom, left, right or center, centerx, centery
@@ -25,7 +30,6 @@ class Ship:
 		# set inital flags for ship movement
 		self.moving_right = False
 		self.moving_left = False
-		self.shoot_bullet = False
 		# set ship movement speed
 		self.ship_speed = 1
 
@@ -35,9 +39,6 @@ class Ship:
 			 self.rect.x += self.ship_speed * dt
 		if self.moving_left and  self.rect.left > self.screen_rect.left:
 			self.rect.x -= self.ship_speed * dt
-		if self.shoot_bullet:
-			pass
-
 
 	def blitme(self):
 		"""draw ship at its current position"""
