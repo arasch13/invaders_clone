@@ -59,11 +59,7 @@ class SpaceInvadersClone:
 	def _update_physics(self):
 		"""calculate object positions"""
 		self.ship.update(self.dt)
-		self.bullets.update(self.dt) # update method from bullet class is applied to all 
-									 # bullet instances inside 'bullets' group
-		for bullet in self.bullets.copy():
-			if bullet.rect.bottom <= 0:
-				self.bullets.remove(bullet)
+		self._bullets_update()
 
 	def _update_screen(self):
 		"""update screen object surfaces"""
@@ -98,6 +94,14 @@ class SpaceInvadersClone:
 			# and add object to sprite group 'bullets'
 			new_bullet = Bullet(self)
 			self.bullets.add(new_bullet)
+
+	def _bullets_update(self):
+		"""update bullets positions"""
+		self.bullets.update(self.dt) # update method from bullet class is applied to all 
+									 # bullet instances inside 'bullets' group
+		for bullet in self.bullets.copy():
+			if bullet.rect.bottom <= 0:
+				self.bullets.remove(bullet)
 
 ## start game if module run directly
 if __name__ == '__main__':

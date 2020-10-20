@@ -35,7 +35,7 @@ class Ship:
 		# set ship movement speed
 		self.ship_speed = self.settings.ship_speed_factor * displayInfo.current_h
 
-	def update(self,dt):
+	def update(self, dt):
 		"""update ships behavior based on ship movement flags"""
 		if self.moving_right and self.rect.right < self.screen_rect.right:
 			 self.rect.x += self.ship_speed * dt
