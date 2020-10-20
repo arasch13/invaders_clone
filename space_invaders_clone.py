@@ -24,8 +24,11 @@ class SpaceInvadersClone:
 		 # set game window to predefined resolution in 'settings'
 		 # the self.screen object here is a 'surface'
 		 # any visual element in the game window is its own surface
-		self.screen = pygame.display.set_mode(
-			(self.settings.screen_width, self.settings.screen_height))
+		if self.settings.screen_mode == 'fullscreen':
+			self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+		elif self.settings.screen_mode == 'window':
+			self.screen = pygame.display.set_mode(
+			(self.settings.window_screen_width, self.settings.window_screen_height))
 		# set window title
 		pygame.display.set_caption("Space Invaders Clone")
 		# initialize ship
@@ -40,7 +43,7 @@ class SpaceInvadersClone:
 			# check user input
 			self._check_events() # this is a helper method to refactor code
 								 # helper methods commonly start with underscore 
-			# check game mechanics updates
+			# check game mechanics physics
 			self.ship.update(self.dt)
 			
 			# screen updater
@@ -52,25 +55,29 @@ class SpaceInvadersClone:
 			if event.type == pygame.QUIT: # check game exit by hitting 'x'
 				sys.exit()
 			elif event.type == pygame.KEYDOWN: # check if key is pressed down
-				if event.key == pygame.K_q: # check game exit by typing 'q'
-					sys.exit()
-				elif event.key == pygame.K_ESCAPE: # check full screen
-					pass
-				elif event.key == pygame.K_LEFT: # check move left
-					self.ship.moving_left = True
-				elif event.key == pygame.K_RIGHT: # check move right
-					self.ship.moving_right = True
-				elif event.key == pygame.K_SPACE: # check fire bullet
-					pass
+				self._check_keydown_events(event)
 			elif event.type == pygame.KEYUP: # check if key is released again
-				if event.key == pygame.K_ESCAPE: # check full screen
-					pass
-				elif event.key == pygame.K_LEFT: # check move left
-					self.ship.moving_left = False
-				elif event.key == pygame.K_RIGHT: # check move right
-					self.ship.moving_right = False
-				elif event.key == pygame.K_SPACE: # check fire bullet
-					pass
+				self._check_keyup_events(event)
+
+	def _check_keydown_events(self, event):
+		"""event checks when keys are pressed"""
+		if event.key == pygame.K_ESCAPE: # check game exit by typing 'esc'
+			sys.exit()
+		elif event.key == pygame.K_LEFT: # check move left
+			self.ship.moving_left = True
+		elif event.key == pygame.K_RIGHT: # check move right
+			self.ship.moving_right = True
+		elif event.key == pygame.K_SPACE: # check fire bullet
+			pass
+
+	def _check_keyup_events(self, event):
+		"""event checks when keys are released"""
+		if event.key == pygame.K_LEFT: # check move left
+			self.ship.moving_left = False
+		elif event.key == pygame.K_RIGHT: # check move right
+			self.ship.moving_right = False
+		elif event.key == pygame.K_SPACE: # check fire bullet
+			pass
 
 	def _update_screen(self):
 		"""screen updater (update game window for each while loop)"""

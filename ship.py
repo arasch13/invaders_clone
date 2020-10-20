@@ -1,6 +1,7 @@
 """class for user's ship"""
 
 import pygame
+import os
 
 
 class Ship:
@@ -12,8 +13,9 @@ class Ship:
 		# get screen dimensions as rectangle
 		self.screen = ai_game.screen
 		self.screen_rect = ai_game.screen.get_rect()
-		# load image of ship and geht its rectangle dimension
-		self.image = pygame.image.load('images/ship.png')
+		# load image of ship and get its rectangle dimension
+		path = os.path.dirname(__file__) # get path of this file
+		self.image = pygame.image.load(rf"{path}\images\ship.png")
 		self.rect = self.image.get_rect()
 		# get bottom center of screen and set as bottom center of ship rectangle
 		# possible position attributes of a rectangle:
@@ -25,14 +27,14 @@ class Ship:
 		self.moving_left = False
 		self.shoot_bullet = False
 		# set ship movement speed
-		self.ship_speed = 50
+		self.ship_speed = 1
 
 	def update(self,dt):
 		"""update ships behavior based on ship movement flags"""
-		if self.moving_right:
-			 self.rect.x += self.ship_speed / dt
-		if self.moving_left:
-			self.rect.x -= self.ship_speed / dt
+		if self.moving_right and self.rect.right < self.screen_rect.right:
+			 self.rect.x += self.ship_speed * dt
+		if self.moving_left and  self.rect.left > self.screen_rect.left:
+			self.rect.x -= self.ship_speed * dt
 		if self.shoot_bullet:
 			pass
 
