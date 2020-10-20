@@ -20,6 +20,21 @@ class Ship:
 		# top, bottom, left, right or center, centerx, centery
 		# or midbottom, midtop, midleft, midright 
 		self.rect.midbottom = self.screen_rect.midbottom 
+		# set inital flags for ship movement
+		self.moving_right = False
+		self.moving_left = False
+		self.shoot_bullet = False
+		# set ship movement speed
+		self.ship_speed = 50
+
+	def update(self,dt):
+		"""update ships behavior based on ship movement flags"""
+		if self.moving_right:
+			 self.rect.x += self.ship_speed / dt
+		if self.moving_left:
+			self.rect.x -= self.ship_speed / dt
+		if self.shoot_bullet:
+			pass
 
 
 	def blitme(self):
