@@ -1,28 +1,41 @@
 '''Attempt to create space invaders clone game'''
 
-# import relevant modules from standard library
+## import relevant modules from standard library
 import sys		# containing tools to exit game
 import pygame	# game module
 
-# import own modules
+## import own modules
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 
-# create class for game
+## create class for game
 class SpaceInvadersClone:
 	"""overall class to manage game assets and behavior"""
 
 	def __init__(self):
 		"""initialize game and create game resources"""
+		pygame.init() # initialize background settings
+		self.settings = Settings() # load settings
+		self.clock = pygame.time.Clock() # get clock for fps limitation
+		self._set_screen() # set game window resolution and title
+		self.ship = Ship(self) # initialize ship
+		self.bullets = pygame.sprite.Group() # create sprite group for bullets
 
-		# initialize background settings
-		pygame.init()
-		# load settings
-		self.settings = Settings()
-		# get clock for fps limitation
-		self.clock = pygame.time.Clock()
-		 # set game window to predefined resolution in 'settings'
+	def run_game(self):
+		"""start main loop for game"""
+		while True:
+			self.dt = self.clock.tick(self.settings.fps) # limit game fps
+			self._check_events() # check user input
+			self._update_physics() # check game mechanics physics
+			self._update_screen() # screen updater
+
+
+	# -----------------------------  helper methods  ---------------------------------
+	# helper methods: methods to refactor code (commonly start with underscore)
+	def _set_screen(self):
+		"""set screen properties"""
+		# set game window to predefined resolution in 'settings'
 		 # the self.screen object here is a 'surface'
 		 # any visual element in the game window is its own surface
 		if self.settings.screen_mode == 'fullscreen':
@@ -30,26 +43,8 @@ class SpaceInvadersClone:
 		elif self.settings.screen_mode == 'window':
 			self.screen = pygame.display.set_mode(
 			(self.settings.window_screen_width, self.settings.window_screen_height))
-		displayInfo = pygame.display.Info()
-		self.settings.bullet_width = self.settings.bullet_width_factor * displayInfo.current_w
-		self.settings.bullet_height = self.settings.bullet_height_factor * displayInfo.current_h
-
 		# set window title
 		pygame.display.set_caption("Space Invaders Clone")
-		# initialize ship
-		self.ship = Ship(self)
-		# create sprite group for bullets
-		self.bullets = pygame.sprite.Group()
-
-	def run_game(self):
-		"""start main loop for game"""
-		while True:
-			# limit game fps
-			self.dt = self.clock.tick(self.settings.fps)
-			# helper methods: methods to refactor code (commonly start with underscore)
-			self._check_events() # check user input
-			self._update_physics() # check game mechanics physics
-			self._update_screen() # screen updater
 
 	def _check_events(self):
 		"""event loop to listen to user input"""
@@ -62,15 +57,16 @@ class SpaceInvadersClone:
 				self._check_keyup_events(event)
 
 	def _update_physics(self):
-		""""""
+		"""calculate object positions"""
 		self.ship.update(self.dt)
-		self.bullets.update(self.dt)
+		self.bullets.update(self.dt) # update method from bullet class is applied to all 
+									 # bullet instances inside 'bullets' group
 		for bullet in self.bullets.copy():
 			if bullet.rect.bottom <= 0:
 				self.bullets.remove(bullet)
 
 	def _update_screen(self):
-		"""screen updater (update game window for each while loop)"""
+		"""update screen object surfaces"""
 		self.screen.fill(self.settings.bg_color) # background color
 		self.ship.blitme() # draw ship
 		for bullet in self.bullets.sprites():
@@ -94,16 +90,16 @@ class SpaceInvadersClone:
 			self.ship.moving_left = False
 		elif event.key == pygame.K_RIGHT: # check move right
 			self.ship.moving_right = False
-		elif event.key == pygame.K_SPACE: # check fire bullet
-			pass
 
 	def _fire_bullet(self):
-		""""""
-		new_bullet = Bullet(self)
-		self.bullets.add(new_bullet)
+		"""create new bullet and add to sprite group"""
+		if len(self.bullets) < self.settings.bullets_allowed:
+			# if bullet is fired, create instance from Bullet class
+			# and add object to sprite group 'bullets'
+			new_bullet = Bullet(self)
+			self.bullets.add(new_bullet)
 
-
-# start game if module run directly
+## start game if module run directly
 if __name__ == '__main__':
 	sic = SpaceInvadersClone()
 	sic.run_game()

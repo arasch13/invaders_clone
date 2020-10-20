@@ -16,19 +16,21 @@ class Bullet(Sprite):
 		self.settings = ai_game.settings
 		# get bullet color from settings
 		self.color = self.settings.bullet_color
-
+		# set bullet size relative to screen resolution
+		displayInfo = pygame.display.Info()
+		self.settings.bullet_width = self.settings.bullet_width_factor * displayInfo.current_w
+		self.settings.bullet_height = self.settings.bullet_height_factor * displayInfo.current_h
 		# create a rectangle for bullet in screen origin 
 		# with width and height from settings
 		self.rect = pygame.Rect(0, 0, self.settings.bullet_width,
 			self.settings.bullet_height)
 		# set midtop of bullet rectangle to ship rectangle midtop 
 		self.rect.midtop = ai_game.ship.rect.midtop
-		# save y_position as a float
-		self.y = float(self.rect.y)
 
 	def update(self, dt):
-		"""update bullet position based on speed"""
-		self.rect.y -= self.settings.bullet_speed * dt
+		"""update bullet position based on speed and screen size"""
+		displayInfo = pygame.display.Info()
+		self.rect.y -= (self.settings.bullet_speed_factor * displayInfo.current_h) * dt
 
 	def draw_bullet(self):
 		"""draw bullet to screen"""
