@@ -8,6 +8,7 @@ import pygame	# game module
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 ## create class for game
 class SpaceInvadersClone:
@@ -21,6 +22,8 @@ class SpaceInvadersClone:
 		self._set_screen() # set game window resolution and title
 		self.ship = Ship(self) # initialize ship
 		self.bullets = pygame.sprite.Group() # create sprite group for bullets
+		self.aliens = pygame.sprite.Group() # create sprite group for aliens
+		self._create_fleet() # create a fleet of aliens when game starts
 
 	def run_game(self):
 		"""start main loop for game"""
@@ -60,13 +63,15 @@ class SpaceInvadersClone:
 		"""calculate object positions"""
 		self.ship.update(self.dt)
 		self._bullets_update()
+		self._aliens_update()
 
 	def _update_screen(self):
 		"""update screen object surfaces"""
 		self.screen.fill(self.settings.bg_color) # background color
 		self.ship.blitme() # draw ship
-		for bullet in self.bullets.sprites():
+		for bullet in self.bullets.sprites(): # draw bullets
 			bullet.draw_bullet()
+		self.aliens.draw(self.screen) # draw aliens
 		pygame.display.flip() # only make recently drawn screen visible
 
 	def _check_keydown_events(self, event):
@@ -96,12 +101,32 @@ class SpaceInvadersClone:
 			self.bullets.add(new_bullet)
 
 	def _bullets_update(self):
-		"""update bullets positions"""
+		"""update bullets' positions"""
 		self.bullets.update(self.dt) # update method from bullet class is applied to all 
 									 # bullet instances inside 'bullets' group
 		for bullet in self.bullets.copy():
 			if bullet.rect.bottom <= 0:
 				self.bullets.remove(bullet)
+
+	def _aliens_update(self):
+		"""update aliens' positions"""
+		self.aliens.update(self.dt)
+
+	def _create_fleet(self):
+		"""create an alien fleet that fills row space"""
+		# create first alien to get its attributes
+		alien = Alien(self)
+		# get available row space for aliens
+		displayInfo = pygame.display.Info()
+		available_x_space = displayInfo.current_w - (2 * alien.rect.width)
+		number_aliens_x = available_x_space // (2 * alien.rect.width)
+		print(number_aliens_x)
+		# create first alien row
+		for i in range(number_aliens_x):
+			alien = Alien(self)
+			alien.rect.x = alien.rect.width + 2 * alien.rect.width * i
+			self.aliens.add(alien)
+
 
 ## start game if module run directly
 if __name__ == '__main__':

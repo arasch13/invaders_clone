@@ -8,8 +8,8 @@ class Settings:
 		self.fps = 60
 		# screen settings
 		self.screen_mode = 'fullscreen' # 'window' or 'fullscreen'
-		self.window_screen_width = 1200
-		self.window_screen_height = 600
+		self.window_screen_width = 600
+		self.window_screen_height = 300
 		self.bg_color = (230, 230, 230)
 		# object settings
 		self.ship_speed_factor = 0.001
