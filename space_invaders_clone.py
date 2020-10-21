@@ -3,6 +3,7 @@
 ## import relevant modules from standard library
 import sys		# containing tools to exit game
 import pygame	# game module
+import os
 
 ## import own modules
 from settings import Settings
@@ -20,6 +21,7 @@ class SpaceInvadersClone:
 		self.settings = Settings() # load settings
 		self.clock = pygame.time.Clock() # get clock for fps limitation
 		self._set_screen() # set game window resolution and title
+		self._play_music() # set background music
 		self.ship = Ship(self) # initialize ship
 		self.bullets = pygame.sprite.Group() # create sprite group for bullets
 		self.aliens = pygame.sprite.Group() # create sprite group for aliens
@@ -29,6 +31,7 @@ class SpaceInvadersClone:
 		"""start main loop for game"""
 		while True:
 			self.dt = self.clock.tick(self.settings.fps) # limit game fps
+			print(self.clock.get_fps())
 			self._check_events() # check user input
 			self._update_physics() # check game mechanics physics
 			self._update_screen() # screen updater
@@ -48,7 +51,21 @@ class SpaceInvadersClone:
 			(self.settings.window_screen_width, self.settings.window_screen_height))
 		# set window title
 		pygame.display.set_caption("Space Invaders Clone")
+		# load background image and scale
+		path = os.path.dirname(__file__)
+		self.background_image = pygame.image.load(rf"{path}\images\background.png")
+		displayInfo = pygame.display.Info()
+		self.background_image = pygame.transform.scale(self.background_image, (displayInfo.current_w+2, displayInfo.current_h+2))
+	
+	def _play_music(self):
+		"""play background music in endless loop"""
+		path = os.path.dirname(__file__)
+		pygame.mixer.music.load(rf"{path}\sounds\background.mp3") 
+		pygame.mixer.music.play(-1,0.0)
 
+
+
+		"""set screen properties"""
 	def _check_events(self):
 		"""event loop to listen to user input"""
 		for event in pygame.event.get():  # watch for keyboard and mouse events
@@ -67,7 +84,7 @@ class SpaceInvadersClone:
 
 	def _update_screen(self):
 		"""update screen object surfaces"""
-		self.screen.fill(self.settings.bg_color) # background color
+		self.screen.blit(self.background_image, [-2, -2]) # background
 		self.ship.blitme() # draw ship
 		for bullet in self.bullets.sprites(): # draw bullets
 			bullet.draw_bullet()
