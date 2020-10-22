@@ -24,7 +24,7 @@ class Alien(Sprite):
 		self.rect.x = self.rect.width
 		self.rect.y = self.rect.height
 		# set alien movement speed and drop height
-		self.alien_speed_factor = 0.00005 # horizontal movement speed
+		self.alien_speed_factor = 0.0001 # horizontal movement speed
 		self.alien_drop_height = 2 * self.rect.height # drop speed when hitting the edge
 		self.alien_x_direction = 1 # initially move to the right
 
