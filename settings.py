@@ -18,5 +18,6 @@ class Settings:
 		self.bullet_height_factor = 0.02
 		self.bullet_color = (230, 230, 230) 
 		self.bullets_allowed = 3
-		# game difficulty
+		# game settings
 		self.difficulty = 'normal'
+		self.ship_limit = 3

@@ -4,12 +4,14 @@
 import sys		# containing tools to exit game
 import pygame	# game module
 import os
+from time import sleep
 
 ## import own modules
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from game_stats import GameStats
 
 ## create class for game
 class SpaceInvadersClone:
@@ -19,6 +21,8 @@ class SpaceInvadersClone:
 		"""initialize game and create game resources"""
 		pygame.init() # initialize background settings
 		self.settings = Settings() # load settings
+		self.stats = GameStats(self) # initial game statistics
+		self.game_active = True # game is active
 		self.clock = pygame.time.Clock() # get clock for fps limitation
 		self._set_screen() # set game window resolution and title
 		self._play_music() # set background music
@@ -32,7 +36,8 @@ class SpaceInvadersClone:
 		while True:
 			self.dt = self.clock.tick(self.settings.fps) # limit game fps
 			self._check_events() # check user input
-			self._update_physics() # check game mechanics physics
+			if self.game_active:
+				self._update_physics() # check game mechanics physics
 			self._update_screen() # screen updater
 
 
@@ -145,8 +150,30 @@ class SpaceInvadersClone:
 		self.aliens.update(self.dt)
 		# check ship collision
 		# 'spritecollideany()' checks collision between any sprite object and all objects of a group
-		if pygame.sprite.spritecollideany(self.ship, self.aliens):
-			sys.exit()
+		shipHit = pygame.sprite.spritecollideany(self.ship, self.aliens)
+		if shipHit or (1==2):
+			self._dead_sequence()
+
+	def _dead_sequence(self):
+		# stop music
+		pygame.mixer.music.stop()
+		# pause
+		sleep(1)
+		# replay music
+		self._play_music()
+		# decrease remaining lifes
+		self.stats.ships_left -= 1
+		# empty aliens and bullets groups
+		self.bullets.empty() # empty bullets group
+		self.aliens.empty() # empty bullets group
+		# create new fleet
+		self._create_fleet()
+		# recenter ship
+		self.ship.center_ship()
+		if self.stats.ships_left == 0:
+			print("Game Over!")
+			self.game_active = False
+			pygame.mixer.music.stop()
 
 
 	def _create_fleet(self):

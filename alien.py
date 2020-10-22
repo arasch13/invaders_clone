@@ -23,16 +23,16 @@ class Alien(Sprite):
 		# start each alien near the top left corner of screen
 		self.rect.x = self.rect.width
 		self.rect.y = self.rect.height
-		# set alien movement speed
+		# set alien movement speed and drop height
 		self.alien_speed_factor = 0.00005 # horizontal movement speed
-		self.alien_dropspeed_factor = 0.75 # drop speed when hitting the edge
+		self.alien_drop_height = 2 * self.rect.height # drop speed when hitting the edge
 		self.alien_x_direction = 1 # initially move to the right
 
 	def update(self, dt):
 		"""update alien position based on speed and screen size"""
 		# check if alien reaches screen border
 		if (self.rect.right > self.screen_rect.right) or (self.rect.left < self.screen_rect.left):
-			self.rect.y += self.alien_dropspeed_factor * self.settings.screen_height
+			self.rect.y += self.alien_drop_height
 			self.alien_x_direction *= -1
 		# move alien
 		self.rect.x += (self.alien_speed_factor * self.settings.screen_width * self.alien_x_direction) * dt

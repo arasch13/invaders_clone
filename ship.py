@@ -23,11 +23,8 @@ class Ship:
 		# get ship's rectangle dimension
 		self.rect = self.image.get_rect()
 		
-		# get bottom center of screen and set as bottom center of ship rectangle
-		# possible position attributes of a rectangle:
-		# top, bottom, left, right or center, centerx, centery
-		# or midbottom, midtop, midleft, midright 
-		self.rect.midbottom = self.screen_rect.midbottom 
+		# center ship at screen bottom center
+		self.center_ship()
 		# set inital flags for ship movement
 		self.moving_right = False
 		self.moving_left = False
@@ -47,3 +44,11 @@ class Ship:
 		"""draw ship at its current position"""
 		self.screen.blit(self.image, self.rect) # 'blit()' function draws a provided 
 												# image into a provided position
+
+	def center_ship(self):
+		""""""
+		# get bottom center of screen and set as bottom center of ship rectangle
+		# possible position attributes of a rectangle:
+		# top, bottom, left, right or center, centerx, centery
+		# or midbottom, midtop, midleft, midright 
+		self.rect.midbottom = self.screen_rect.midbottom 
