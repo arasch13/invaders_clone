@@ -17,9 +17,8 @@ class Bullet(Sprite):
 		# get bullet color from settings
 		self.color = self.settings.bullet_color
 		# set bullet size relative to screen resolution
-		displayInfo = pygame.display.Info()
-		self.settings.bullet_width = self.settings.bullet_width_factor * displayInfo.current_w
-		self.settings.bullet_height = self.settings.bullet_height_factor * displayInfo.current_h
+		self.settings.bullet_width = self.settings.bullet_width_factor * self.settings.screen_width
+		self.settings.bullet_height = self.settings.bullet_height_factor * self.settings.screen_height
 		# create a rectangle for bullet in screen origin 
 		# with width and height from settings
 		self.rect = pygame.Rect(0, 0, self.settings.bullet_width,
@@ -29,8 +28,8 @@ class Bullet(Sprite):
 
 	def update(self, dt):
 		"""update bullet position based on speed and screen size"""
-		displayInfo = pygame.display.Info()
-		self.rect.y -= (self.settings.bullet_speed_factor * displayInfo.current_h) * dt
+		# move bullets
+		self.rect.y -= (self.settings.bullet_speed_factor * self.settings.screen_height) * dt
 
 	def draw_bullet(self):
 		"""draw bullet to screen"""

@@ -19,8 +19,7 @@ class Ship:
 		path = os.path.dirname(__file__) # get path of this file
 		self.image = pygame.image.load(rf"{path}\images\ship.png")
 		# resize ship based on screen resolution
-		displayInfo = pygame.display.Info()
-		self.image = pygame.transform.scale(self.image, (int(112/1920 * displayInfo.current_w), int(144/1080 * displayInfo.current_h)))
+		self.image = pygame.transform.scale(self.image, (int(112/1280 * self.settings.screen_width), int(144/1024 * self.settings.screen_height)))
 		# get ship's rectangle dimension
 		self.rect = self.image.get_rect()
 		
@@ -33,7 +32,7 @@ class Ship:
 		self.moving_right = False
 		self.moving_left = False
 		# set ship movement speed
-		self.ship_speed = self.settings.ship_speed_factor * displayInfo.current_h
+		self.ship_speed = self.settings.ship_speed_factor * self.settings.screen_height
 
 	def update(self, dt):
 		"""update ships behavior based on ship movement flags"""

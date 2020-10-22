@@ -5,11 +5,11 @@ class Settings:
 	def __init__(self):
 		"""Initialize game settings"""
 		# fps settings
-		self.fps = 30
+		self.fps = 60
 		# screen settings
 		self.screen_mode = 'fullscreen' # 'window' or 'fullscreen'
-		self.window_screen_width = 600
-		self.window_screen_height = 300
+		self.window_screen_width = 640
+		self.window_screen_height = 520
 		self.bg_color = (230, 230, 230)
 		# object settings
 		self.ship_speed_factor = 0.001

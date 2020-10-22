@@ -25,13 +25,12 @@ class SpaceInvadersClone:
 		self.ship = Ship(self) # initialize ship
 		self.bullets = pygame.sprite.Group() # create sprite group for bullets
 		self.aliens = pygame.sprite.Group() # create sprite group for aliens
-		self._create_fleet() # create a fleet of aliens when game starts
+		 # create a fleet of aliens when game starts
 
 	def run_game(self):
 		"""start main loop for game"""
 		while True:
 			self.dt = self.clock.tick(self.settings.fps) # limit game fps
-			print(self.clock.get_fps())
 			self._check_events() # check user input
 			self._update_physics() # check game mechanics physics
 			self._update_screen() # screen updater
@@ -49,21 +48,22 @@ class SpaceInvadersClone:
 		elif self.settings.screen_mode == 'window':
 			self.screen = pygame.display.set_mode(
 			(self.settings.window_screen_width, self.settings.window_screen_height))
+		# save screen resolution
+		displayInfo = pygame.display.Info()
+		self.settings.screen_width = displayInfo.current_w
+		self.settings.screen_height = displayInfo.current_h
 		# set window title
 		pygame.display.set_caption("Space Invaders Clone")
 		# load background image and scale
 		path = os.path.dirname(__file__)
 		self.background_image = pygame.image.load(rf"{path}\images\background.png")
-		displayInfo = pygame.display.Info()
-		self.background_image = pygame.transform.scale(self.background_image, (displayInfo.current_w+2, displayInfo.current_h+2))
+		self.background_image = pygame.transform.scale(self.background_image, (self.settings.screen_width+2, self.settings.screen_height+2))
 	
 	def _play_music(self):
 		"""play background music in endless loop"""
 		path = os.path.dirname(__file__)
 		pygame.mixer.music.load(rf"{path}\sounds\background.mp3") 
 		pygame.mixer.music.play(-1,0.0)
-
-
 
 		"""set screen properties"""
 	def _check_events(self):
@@ -121,29 +121,53 @@ class SpaceInvadersClone:
 		"""update bullets' positions"""
 		self.bullets.update(self.dt) # update method from bullet class is applied to all 
 									 # bullet instances inside 'bullets' group
+		# check if bullet leaves screen area
+		self._leaving_bullets()
+		# check if bullet hits alien
+		self._alien_collision()
+	
+	def _leaving_bullets(self):
 		for bullet in self.bullets.copy():
 			if bullet.rect.bottom <= 0:
 				self.bullets.remove(bullet)
 
+	def _alien_collision(self):
+		collisions = pygame.sprite.groupcollide(	# 'groupcollide()' can detect collisions between
+			self.bullets, self.aliens, True, True)	# sprite objects and remove any object based on
+													# input arguments
+		# check if aliens are gone
+		if not self.aliens: # check if aliens group is empty
+			self.bullets.empty() # empty bullets group
+			self._create_fleet() # create new alien fleet
+
 	def _aliens_update(self):
 		"""update aliens' positions"""
 		self.aliens.update(self.dt)
+		# check ship collision
+		# 'spritecollideany()' checks collision between any sprite object and all objects of a group
+		if pygame.sprite.spritecollideany(self.ship, self.aliens):
+			sys.exit()
+
 
 	def _create_fleet(self):
 		"""create an alien fleet that fills row space"""
 		# create first alien to get its attributes
 		alien = Alien(self)
 		# get available row space for aliens
-		displayInfo = pygame.display.Info()
-		available_x_space = displayInfo.current_w - (2 * alien.rect.width)
+		available_x_space = self.settings.screen_width - (2 * alien.rect.width) - (int(self.settings.screen_width / 60))
+		available_y_space = self.settings.screen_height - (6 * alien.rect.height) - self.ship.rect.height
 		number_aliens_x = available_x_space // (2 * alien.rect.width)
-		print(number_aliens_x)
-		# create first alien row
-		for i in range(number_aliens_x):
-			alien = Alien(self)
-			alien.rect.x = alien.rect.width + 2 * alien.rect.width * i
-			self.aliens.add(alien)
+		# create alien rows
+		number_rows = available_y_space // (2 * alien.rect.height)
 
+		for i in range(number_rows):
+			# create alien row
+			for j in range(number_aliens_x):
+				alien = Alien(self)
+				alien.rect.x = alien.rect.width + 2 * alien.rect.width * j
+				alien.rect.y = alien.rect.height + 2 * alien.rect.height * i
+				self.aliens.add(alien)
+		
 
 ## start game if module run directly
 if __name__ == '__main__':
