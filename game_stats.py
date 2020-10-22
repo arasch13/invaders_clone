@@ -12,3 +12,4 @@ class GameStats:
 		"""reset stats when new game starts"""
 		self.ships_left = self.settings.ship_limit
 		self.game_active = False
+		self.score = 0

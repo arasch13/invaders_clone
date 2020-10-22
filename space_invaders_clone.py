@@ -170,6 +170,7 @@ class SpaceInvadersClone:
 		if not self.aliens: # check if aliens group is empty
 			self.bullets.empty() # empty bullets group
 			self._create_fleet() # create new alien fleet
+			self.settings.increase_speed()
 
 	def _aliens_update(self):
 		"""update aliens' positions"""
@@ -192,6 +193,8 @@ class SpaceInvadersClone:
 		# empty aliens and bullets groups
 		self.bullets.empty() # empty bullets group
 		self.aliens.empty() # empty aliens group
+		# set initial speed values
+		self.settings.initialize_dynamic_settings()
 		# create new fleet
 		self._create_fleet()
 		# recenter ship
