@@ -36,10 +36,10 @@ class SpaceInvadersClone:
 		while True:
 			self.dt = self.clock.tick(self.settings.fps) # limit game fps
 			self._check_events() # check user input
+			self._update_screen() # screen updater
 			if self.stats.game_active:
 				self._update_physics() # check game mechanics physics
-			self._update_screen() # screen updater
-
+			
 
 	# -----------------------------  helper methods  ---------------------------------
 	# helper methods: methods to refactor code (commonly start with underscore)
