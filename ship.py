@@ -39,6 +39,7 @@ class Ship:
 			 self.rect.x += self.ship_speed * dt
 		elif self.moving_left and  self.rect.left > self.screen_rect.left:
 			self.rect.x -= self.ship_speed * dt
+		pygame.mouse.set_pos(self.rect.x, self.settings.screen_height/2)
 
 	def blitme(self):
 		"""draw ship at its current position"""

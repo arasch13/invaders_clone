@@ -12,6 +12,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
+from button import Button
 
 ## create class for game
 class SpaceInvadersClone:
@@ -22,21 +23,20 @@ class SpaceInvadersClone:
 		pygame.init() # initialize background settings
 		self.settings = Settings() # load settings
 		self.stats = GameStats(self) # initial game statistics
-		self.game_active = True # game is active
+		self.stats.game_active = False	 # game is active
 		self.clock = pygame.time.Clock() # get clock for fps limitation
 		self._set_screen() # set game window resolution and title
-		self._play_music() # set background music
 		self.ship = Ship(self) # initialize ship
 		self.bullets = pygame.sprite.Group() # create sprite group for bullets
 		self.aliens = pygame.sprite.Group() # create sprite group for aliens
-		 # create a fleet of aliens when game starts
+		self.play_button = Button(self, "Play")
 
 	def run_game(self):
 		"""start main loop for game"""
 		while True:
 			self.dt = self.clock.tick(self.settings.fps) # limit game fps
 			self._check_events() # check user input
-			if self.game_active:
+			if self.stats.game_active:
 				self._update_physics() # check game mechanics physics
 			self._update_screen() # screen updater
 
@@ -80,6 +80,12 @@ class SpaceInvadersClone:
 				self._check_keydown_events(event)
 			elif event.type == pygame.KEYUP: # check if key is released again
 				self._check_keyup_events(event)
+			elif event.type == pygame.MOUSEBUTTONDOWN: # check if mouse button pressed
+				self._check_mousebutton_events(event)
+			if self.stats.game_active == True:
+				x_mouse, y_mouse =  pygame.mouse.get_pos()
+				if x_mouse > 0 and x_mouse < (self.settings.screen_width - self.ship.rect.width):
+					self.ship.rect.x = x_mouse
 
 	def _update_physics(self):
 		"""calculate object positions"""
@@ -90,6 +96,10 @@ class SpaceInvadersClone:
 	def _update_screen(self):
 		"""update screen object surfaces"""
 		self.screen.blit(self.background_image, [-2, -2]) # background
+		if self.stats.game_active == False:
+			self.play_button.draw_button()# button
+		else:
+			pygame.mouse.set_visible(False) # make mouse invisible
 		self.ship.blitme() # draw ship
 		for bullet in self.bullets.sprites(): # draw bullets
 			bullet.draw_bullet()
@@ -113,6 +123,22 @@ class SpaceInvadersClone:
 			self.ship.moving_left = False
 		elif event.key == pygame.K_RIGHT: # check move right
 			self.ship.moving_right = False
+
+	def _check_mousebutton_events(self, event):
+		""""""
+		mouse_pos = pygame.mouse.get_pos() # get position of mouse cursor
+		self._check_on_button(mouse_pos)
+
+	def _check_on_button(self, mouse_pos):
+		""""""
+		# check if play button
+		if self.stats.game_active == False:
+			# 'collidepoint()' checks collision of a rectangle with a point
+			if self.play_button.rect.collidepoint(mouse_pos):
+				self.stats.game_active = True
+				self._play_music() # set background music
+		if self.stats.game_active == True:
+			self._fire_bullet()
 
 	def _fire_bullet(self):
 		"""create new bullet and add to sprite group"""
@@ -165,16 +191,16 @@ class SpaceInvadersClone:
 		self.stats.ships_left -= 1
 		# empty aliens and bullets groups
 		self.bullets.empty() # empty bullets group
-		self.aliens.empty() # empty bullets group
+		self.aliens.empty() # empty aliens group
 		# create new fleet
 		self._create_fleet()
 		# recenter ship
 		self.ship.center_ship()
 		if self.stats.ships_left == 0:
-			print("Game Over!")
-			self.game_active = False
+			self.stats.reset_stats()
 			pygame.mixer.music.stop()
-
+			self.aliens.empty() # empty aliens group
+			pygame.mouse.set_visible(True) # make mouse visible again
 
 	def _create_fleet(self):
 		"""create an alien fleet that fills row space"""
