@@ -29,9 +29,12 @@ class Settings:
 		self.ship_speed_factor = 0.001
 		self.bullet_speed_factor = 0.00075
 		self.alien_speed_factor = 0.0001
+		# score settings
+		self.alien_points = 30
 
 	def increase_speed(self):
 		"""increase game speed"""
 		self.ship_speed_factor *= self.speedup_scale
 		self.bullet_speed_factor *= self.speedup_scale
 		self.alien_speed_factor *= self.speedup_scale
+		# self.alien_points *= self.alien_points

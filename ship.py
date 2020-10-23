@@ -22,6 +22,10 @@ class Ship:
 		self.image = pygame.transform.scale(self.image, (int(112/1280 * self.settings.screen_width), int(144/1024 * self.settings.screen_height)))
 		# get ship's rectangle dimension
 		self.rect = self.image.get_rect()
+		# resize ship image for remaining lifes
+		self.life_image = pygame.transform.scale(self.image, (int(112/1280 * self.settings.screen_width / 2), int(144/1024 * self.settings.screen_height / 2)))
+		# get ship's rectangle dimension for remaining lifes
+		self.life_image_rect = self.image.get_rect()
 		
 		# center ship at screen bottom center
 		self.center_ship()
@@ -45,6 +49,13 @@ class Ship:
 		"""draw ship at its current position"""
 		self.screen.blit(self.image, self.rect) # 'blit()' function draws a provided 
 												# image into a provided position
+
+	def blit_lifes(self, remaining_lifes):
+		"""draw ship lifes"""
+		self.life_image_rect.top = 10
+		for i in range(remaining_lifes-1):
+			self.life_image_rect.right = 70 + 60 * (i+1)
+			self.screen.blit(self.life_image, self.life_image_rect)
 
 	def center_ship(self):
 		""""""

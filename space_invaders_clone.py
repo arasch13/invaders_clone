@@ -5,6 +5,7 @@ import sys		# containing tools to exit game
 import pygame	# game module
 import os
 from time import sleep
+import json
 
 ## import own modules
 from settings import Settings
@@ -13,6 +14,7 @@ from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 ## create class for game
 class SpaceInvadersClone:
@@ -23,9 +25,13 @@ class SpaceInvadersClone:
 		pygame.init() # initialize background settings
 		self.settings = Settings() # load settings
 		self.stats = GameStats(self) # initial game statistics
+		self.stats.highscore = self.stats._get_highscore() # get highscore
 		self.stats.game_active = False	 # game is active
 		self.clock = pygame.time.Clock() # get clock for fps limitation
 		self._set_screen() # set game window resolution and title
+		self.scoreboard = Scoreboard(self) # set scoreboard
+		self.scoreboard.prep_score()
+		self.scoreboard.prep_highscore()
 		self.ship = Ship(self) # initialize ship
 		self.bullets = pygame.sprite.Group() # create sprite group for bullets
 		self.aliens = pygame.sprite.Group() # create sprite group for aliens
@@ -63,7 +69,7 @@ class SpaceInvadersClone:
 		path = os.path.dirname(__file__)
 		self.background_image = pygame.image.load(rf"{path}\images\background.png")
 		self.background_image = pygame.transform.scale(self.background_image, (self.settings.screen_width+2, self.settings.screen_height+2))
-	
+
 	def _play_music(self):
 		"""play background music in endless loop"""
 		path = os.path.dirname(__file__)
@@ -104,6 +110,9 @@ class SpaceInvadersClone:
 		for bullet in self.bullets.sprites(): # draw bullets
 			bullet.draw_bullet()
 		self.aliens.draw(self.screen) # draw aliens
+		self.scoreboard.show_score() # scoreboard
+		self.scoreboard.show_highscore() # scoreboard
+		self._show_remaining() # show remaining lifes
 		pygame.display.flip() # only make recently drawn screen visible
 
 	def _check_keydown_events(self, event):
@@ -166,6 +175,12 @@ class SpaceInvadersClone:
 		collisions = pygame.sprite.groupcollide(	# 'groupcollide()' can detect collisions between
 			self.bullets, self.aliens, True, True)	# sprite objects and remove any object based on
 													# input arguments
+		if collisions:
+			self.stats.score += self.settings.alien_points # increase score
+			if self.stats.score > self.stats.highscore:
+				self.stats.highscore = self.stats.score
+			self.scoreboard.prep_score()
+			self.scoreboard.prep_highscore()
 		# check if aliens are gone
 		if not self.aliens: # check if aliens group is empty
 			self.bullets.empty() # empty bullets group
@@ -200,10 +215,16 @@ class SpaceInvadersClone:
 		# recenter ship
 		self.ship.center_ship()
 		if self.stats.ships_left == 0:
+			# reset score
+			self.stats.score = 0
+			self.scoreboard.prep_score()
+			self.scoreboard.prep_highscore()
+			self.stats._save_highscore(self.stats.highscore) # save highscore
 			self.stats.reset_stats()
 			pygame.mixer.music.stop()
 			self.aliens.empty() # empty aliens group
 			pygame.mouse.set_visible(True) # make mouse visible again
+			
 
 	def _create_fleet(self):
 		"""create an alien fleet that fills row space"""
@@ -224,6 +245,8 @@ class SpaceInvadersClone:
 				alien.rect.y = alien.rect.height + 2 * alien.rect.height * i
 				self.aliens.add(alien)
 		
+	def _show_remaining(self):
+		self.ship.blit_lifes(self.stats.ships_left)
 
 ## start game if module run directly
 if __name__ == '__main__':
